@@ -8,7 +8,8 @@ import redisClient from './redisClient';
 import { WebSocketServer } from 'ws';
 import { useServer } from 'graphql-ws/lib/use/ws';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { setupSocketServer } from './socket';
+import { setupSocketServer } from './socket.io/socket';
+
 
 const app: Express = express(); 
 

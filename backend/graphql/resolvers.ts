@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
-import redisClient from '../src/redisClient';
+import redisClient from './../src/redis/redisClient';
+
 
 const prisma = new PrismaClient();
 const pubsub = new RedisPubSub({
