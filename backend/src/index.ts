@@ -4,11 +4,12 @@ import { ApolloServer } from 'apollo-server-express';
 import { typeDefs } from '../graphql/typeDefs';
 import { resolvers } from '../graphql/resolvers';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
-import redisClient from './redisClient';
+
 import { WebSocketServer } from 'ws';
 import { useServer } from 'graphql-ws/lib/use/ws';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { setupSocketServer } from './socket.io/socket';
+import redisClient from './redis/redisClient';
 
 
 const app: Express = express(); 
