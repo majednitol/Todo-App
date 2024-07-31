@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    depends_on:
+      - redis
+      - mongo
+    environment:
+      - DATABASE_URL=mongodb://mongo:27017/todoapp?retryWrites=true&w=majority
+    ports:
+      - "4000:4000"
+      - "4001:4001"  # GraphQL server
+    volumes:
+      - ./backend:/usr/src/app  # Mount local code into the container
+    networks:
+      - app-network
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"  # Frontend UI
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/usr/src/app  # Mount local code into the container
+    networks:
+      - app-network
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+
+  mongo:
+    build:
+      context: ./mongodb
+      dockerfile: Dockerfile
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - app-network
+
+  nginx:
+    build: ./nginx
+    ports:
+      - "80:80"  # Expose Nginx on port 80
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - app-network
+
+volumes:
+  mongo-data:
+
+networks:
+  app-network:
+    driver: bridge
