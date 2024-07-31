@@ -51,7 +51,7 @@ docker-compose up --build
 
 ### 4. Access
 
- **Frontend**: [http://localhost:80](http://localhost:80)
+ **Frontend**: [http://localhost:3000](http://localhost:80)
  **GraphQL**: [http://localhost:4000/graphql](http://localhost:4000/graphql)
  **Socket.IO**: [http://localhost:4001](http://localhost:4001)
 
