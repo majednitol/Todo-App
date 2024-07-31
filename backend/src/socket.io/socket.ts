@@ -1,6 +1,7 @@
 import http from 'http';
 import { Server as SocketIOServer } from 'socket.io';
-import redisClient from './redisClient';
+import redisClient from '../redis/redisClient';
+
 
 export const setupSocketServer = () => {
   const socketIoHttpServer = http.createServer();
