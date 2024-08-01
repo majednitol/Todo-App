@@ -1,9 +1,9 @@
 **/.classpath
 **/.dockerignore
-**/.env
+# **/.env
 **/.git
 **/.gitignore
-**/.project
+**/.projecta
 **/.settings
 **/.toolstarget
 **/.vs

@@ -5,14 +5,14 @@ services:
     build: ./backend
     depends_on:
       - redis
-      - mongo
+      - postgres
     environment:
-      - DATABASE_URL=mongodb://mongo:27017/todoapp?retryWrites=true&w=majority
+      - DATABASE_URL=postgresql://user:password@postgres:5432/todoapp?schema=public
     ports:
       - "4000:4000"
       - "4001:4001"  # GraphQL server
     volumes:
-      - ./backend:/usr/src/app  # Mount local code into the container
+      - ./backend:/app  # Mount local code into the container
     networks:
       - app-network
 
@@ -34,14 +34,16 @@ services:
     networks:
       - app-network
 
-  mongo:
-    build:
-      context: ./mongodb
-      dockerfile: Dockerfile
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: todoapp
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
     ports:
-      - "27017:27017"
+      - "5432:5432"
     volumes:
-      - mongo-data:/data/db
+      - postgres-data:/var/lib/postgresql/data
     networks:
       - app-network
 
@@ -56,7 +58,7 @@ services:
       - app-network
 
 volumes:
-  mongo-data:
+  postgres-data:
 
 networks:
   app-network:

@@ -2,7 +2,6 @@ import { PrismaClient } from '@prisma/client';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 import redisClient from './../src/redis/redisClient';
 
-
 const prisma = new PrismaClient();
 const pubsub = new RedisPubSub({
   publisher: redisClient,
@@ -18,8 +17,6 @@ export const resolvers = {
     todos: async () => {
       try {
         const cachedTodos = await redisClient.get('todos');
-        console.log("cachedTodos", cachedTodos)
-
         if (cachedTodos) {
           return JSON.parse(cachedTodos);
         }
@@ -33,13 +30,15 @@ export const resolvers = {
           updatedAt: todo.updatedAt.toISOString(),
         }));
       } catch (error) {
-        // Handle error explicitly
-        const err = error as Error;
-        console.error('Error in todos resolver:', err.message);
-        throw new Error(`Failed to fetch todos: ${err.message}`);
+        console.error('Error in todos resolver:', error);
+        if (error instanceof Error) {
+          throw new Error(`Failed to fetch todos: ${error.message}`);
+        } else {
+          throw new Error('Failed to fetch todos due to an unknown error');
+        }
       }
     },
-    todo: async (_: any, { id }: { id: string }) => {
+    todo: async (_: any, { id }: { id: number }) => {  // Changed to number
       try {
         const todo = await prisma.todo.findUnique({ where: { id } });
         if (!todo) {
@@ -52,10 +51,12 @@ export const resolvers = {
           updatedAt: todo.updatedAt.toISOString(),
         };
       } catch (error) {
-        // Handle error explicitly
-        const err = error as Error;
-        console.error('Error fetching todo:', err.message);
-        throw new Error(`Failed to fetch todo: ${err.message}`);
+        console.error('Error fetching todo:', error);
+        if (error instanceof Error) {
+          throw new Error(`Failed to fetch todo: ${error.message}`);
+        } else {
+          throw new Error('Failed to fetch todo due to an unknown error');
+        }
       }
     },
   },
@@ -79,21 +80,24 @@ export const resolvers = {
           updatedAt: newTodo.updatedAt.toISOString(),
         };
       } catch (error) {
-        // Handle error explicitly
-        const err = error as Error;
-        console.error('Error adding todo:', err.message);
-        throw new Error(`Failed to add todo: ${err.message}`);
+        console.error('Error adding todo:', error);
+        if (error instanceof Error) {
+          throw new Error(`Failed to add todo: ${error.message}`);
+        } else {
+          throw new Error('Failed to add todo due to an unknown error');
+        }
       }
     },
-    toggleTodoCompleted: async (_: any, { id }: { id: string }) => {
+    toggleTodoCompleted: async (_: any, { id }: { id: number }) => {  // Changed to number
       try {
-        const todo = await prisma.todo.findUnique({ where: { id } });
+        const userId = Number(id)
+        const todo = await prisma.todo.findUnique({ where: { id: userId } });
         if (!todo) {
           throw new Error(`Todo with id ${id} not found`);
         }
 
         const updatedTodo = await prisma.todo.update({
-          where: { id },
+          where: { id: userId },
           data: { completed: !todo.completed },
         });
 
@@ -106,37 +110,41 @@ export const resolvers = {
           updatedAt: updatedTodo.updatedAt.toISOString(),
         };
       } catch (error) {
-        // Handle error explicitly
-        const err = error as Error;
-        console.error('Error toggling todo completed status:', err.message);
-        throw new Error(`Failed to toggle todo completed status: ${err.message}`);
+        console.error('Error toggling todo completed status:', error);
+        if (error instanceof Error) {
+          throw new Error(`Failed to toggle todo completed status: ${error.message}`);
+        } else {
+          throw new Error('Failed to toggle todo completed status due to an unknown error');
+        }
       }
     },
-    deleteTodo: async (_: any, { id }: { id: string }) => {
+    deleteTodo: async (_: any, { id }: { id: number }) => {  // Changed to number
       try {
-        const todo = await prisma.todo.findUnique({ where: { id } });
+        const userId = Number(id)
+        const todo = await prisma.todo.findUnique({ where: { id: userId } });
         if (!todo) {
           throw new Error(`Todo with id ${id} not found`);
         }
 
-        await prisma.todo.delete({ where: { id } });
+        await prisma.todo.delete({ where: { id: userId } });
 
         await redisClient.del('todos');
         await pubsub.publish(TODO_DELETED, { todoDeleted: id });
 
         return true;
       } catch (error) {
-        // Handle error explicitly
-        const err = error as Error;
-        console.error('Error deleting todo:', err.message);
-        throw new Error(`Failed to delete todo: ${err.message}`);
+        console.error('Error deleting todo:', error);
+        if (error instanceof Error) {
+          throw new Error(`Failed to delete todo: ${error.message}`);
+        } else {
+          throw new Error('Failed to delete todo due to an unknown error');
+        }
       }
     },
   },
   Subscription: {
     todoAdded: {
       subscribe: () => pubsub.asyncIterator([TODO_ADDED]),
-      
     },
     todoUpdated: {
       subscribe: () => pubsub.asyncIterator([TODO_UPDATED]),

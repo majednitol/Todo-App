@@ -3,7 +3,7 @@
 
 ## Overview
 
-A full-featured Todo CRUD application with real-time updates, built using Node.js, TypeScript, GraphQL, Redis, MongoDB, Prisma ORM , Socket.io , Graphql subscription and Docker.
+A full-featured Todo CRUD application with real-time updates, built using Node.js, TypeScript, GraphQL, Redis, Postgresql, Prisma ORM , Socket.io , Graphql subscription and Docker.
 
 ## Features
 
@@ -17,7 +17,7 @@ A full-featured Todo CRUD application with real-time updates, built using Node.j
 
  **Frontend**: HTML, CSS, JavaScript
  **Backend**: Node.js, TypeScript, Apollo Server, Socket.IO
- **Database**: MongoDB, Prisma
+ **Database**: Postgresql, Prisma
  **Cache**: Redis
  **Web Server**: Nginx
  **Containerization**: Docker
@@ -38,7 +38,7 @@ Create a `.env` file in the root directory and add the following:
 ```env
 PORT=4000
 SOCKET_PORT=4001
-MONGO_URI=mongodb://mongo:27017/todo
+postgresql://user:password@postgres:5432/todoapp?schema=public
 REDIS_HOST=redis
 REDIS_PORT=6379
 ```
@@ -47,6 +47,7 @@ REDIS_PORT=6379
 
 ```bash
 docker-compose up --build
+docker-compose down   //stop app
 ```
 
 ### 4. Access

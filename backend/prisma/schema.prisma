@@ -3,12 +3,12 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model Todo {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+id          Int      @id @default(autoincrement())
   title       String
   description String
   completed   Boolean  @default(false)
