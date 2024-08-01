@@ -136,6 +136,7 @@ export const resolvers = {
   Subscription: {
     todoAdded: {
       subscribe: () => pubsub.asyncIterator([TODO_ADDED]),
+      
     },
     todoUpdated: {
       subscribe: () => pubsub.asyncIterator([TODO_UPDATED]),

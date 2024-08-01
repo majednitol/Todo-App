@@ -3,7 +3,7 @@
 
 ## Overview
 
-A full-featured Todo CRUD application with real-time updates, built using Node.js, TypeScript, GraphQL, Redis, MongoDB, and Docker.
+A full-featured Todo CRUD application with real-time updates, built using Node.js, TypeScript, GraphQL, Redis, MongoDB, Prisma ORM and Docker.
 
 ## Features
 
