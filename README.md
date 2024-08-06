@@ -3,7 +3,7 @@
 
 ## Overview
 
-A full-featured Todo CRUD application with real-time updates, built using Node.js, TypeScript, GraphQL, Redis, Postgresql, Prisma ORM , Socket.io , Graphql subscription and Docker,Kubernete with PersistentVolume and PersistentVolumeClaim
+A full-featured Todo CRUD application with real-time updates, built using Node.js, TypeScript, GraphQL, Redis, Postgresql, Nginx, Prisma ORM , Socket.io , Graphql subscription and Docker,Kubernete with PersistentVolume and PersistentVolumeClaim
 
 ## Features
 
