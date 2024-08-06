@@ -50,7 +50,7 @@ docker-compose watch
 docker-compose down   //stop app
 
 ```
-### 3.2. Build and Run (without Kubernete)
+### 3.2. Build and Run ( Kubernete)
 
 ```bash
 minikube start / stop
