@@ -91,6 +91,7 @@ export const resolvers = {
     toggleTodoCompleted: async (_: any, { id }: { id: number }) => {  // Changed to number
       try {
         const userId = Number(id)
+        console.log("trying to addded")
         const todo = await prisma.todo.findUnique({ where: { id: userId } });
         if (!todo) {
           throw new Error(`Todo with id ${id} not found`);
@@ -144,10 +145,14 @@ export const resolvers = {
   },
   Subscription: {
     todoAdded: {
-      subscribe: () => pubsub.asyncIterator([TODO_ADDED]),
+      subscribe: () => {
+        pubsub.asyncIterator([TODO_ADDED])
+        
+        console.log("added subscription occurs successfully")
+      },
     },
     todoUpdated: {
-      subscribe: () => pubsub.asyncIterator([TODO_UPDATED]),
+      // subscribe: () => pubsub.asyncIterator([TODO_UPDATED]),
     },
     todoDeleted: {
       subscribe: () => pubsub.asyncIterator([TODO_DELETED]),

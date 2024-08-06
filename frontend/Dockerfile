@@ -2,7 +2,7 @@
 FROM node:18
 
 # Set the working directory
-WORKDIR /app
+WORKDIR /usr/src/app
 
 # Copy the package.json and package-lock.json
 COPY package*.json ./
@@ -14,8 +14,9 @@ RUN npm install --force
 COPY . .
 
 # Expose port 80
+EXPOSE 3000
 EXPOSE 80
 
 # Start the application
-CMD ["npm", "start"]
+CMD npm run start
 

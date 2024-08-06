@@ -3,7 +3,7 @@
 
 ## Overview
 
-A full-featured Todo CRUD application with real-time updates, built using Node.js, TypeScript, GraphQL, Redis, Postgresql, Prisma ORM , Socket.io , Graphql subscription and Docker.
+A full-featured Todo CRUD application with real-time updates, built using Node.js, TypeScript, GraphQL, Redis, Postgresql, Prisma ORM , Socket.io , Graphql subscription and Docker,Kubernete
 
 ## Features
 
@@ -43,18 +43,40 @@ REDIS_HOST=redis
 REDIS_PORT=6379
 ```
 
-### 3. Build and Run
+### 3.1. Build and Run (without Kubernete)
 
 ```bash
-docker-compose up --build
+docker-compose watch
 docker-compose down   //stop app
-```
 
+```
+### 3.2. Build and Run (without Kubernete)
+
+```bash
+minikube start / stop
+minikube dashboard 
+kubectl apply -f fileName (for create new development or service or pv or pvc)
+
+kubectl apply -f postgres-pv-pvc.yml
+kubectl apply -f postgres-deployment.yaml
+kubectl apply -f redis-deployment.yaml
+kubectl apply -f backend-deployment.yaml
+kubectl apply -f frontend-deployment.yaml
+
+kubectl get pods
+kubectl get all  ( see all development , service)
+kubectl logs podsName  (see what happening in pods)
+
+kubectl port-forward service/frontend-service 3000:3000
+kubectl port-forward service/backend-service 4001:4001 (for graphql)
+kubectl port-forward service/backend-service 4004:4004 (for socket.io)
+
+```
 ### 4. Access
 
  **Frontend**: [http://localhost:3000](http://localhost:80)
- **GraphQL**: [http://localhost:4000/graphql](http://localhost:4000/graphql)
- **Socket.IO**: [http://localhost:4001](http://localhost:4001)
+ **GraphQL**: [http://localhost:4001/graphql](http://localhost:4000/graphql)
+ **Socket.IO**: [http://localhost:4004](http://localhost:4001)
 
 ## Contributing
 

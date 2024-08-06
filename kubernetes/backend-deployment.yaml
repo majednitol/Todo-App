@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: majedur2377/webapp:25
+          ports:
+            - containerPort: 4001
+            - containerPort: 4004
+          env:
+            - name: DATABASE_URL
+              value: "postgresql://user:password@postgres-service:5432/todoapp?schema=public"
+            - name: INSTANCE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: APOLLO_PORT
+              value: "4001"
+            - name: SOCKET_IO_PORT
+              value: "4004"
+            - name: HOST
+              value: "postgres-service"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+spec:
+  type: LoadBalancer
+  ports:
+    - name: apollo-port
+      port: 4001
+      targetPort: 4001
+    - name: socket-io-port
+      port: 4004
+      targetPort: 4004
+  selector:
+    app: backend

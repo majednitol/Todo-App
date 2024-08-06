@@ -1,9 +1,11 @@
 import { io } from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
 import axios from 'https://cdn.jsdelivr.net/npm/axios@1.3.5/+esm';
 
-const socket = io('http://localhost:4001', {
-  transports: [ 'polling'], // Match the server configuration
-  withCredentials: true, // Optional: for CORS credentials
+
+
+const socket = io('http://localhost:4004', {
+  transports: [ 'polling'], 
+  withCredentials: true, 
 });
 
 
@@ -21,7 +23,7 @@ window.addTodo = function () {
   const title = document.getElementById('title').value;
   const description = document.getElementById('description').value;
 
-  axios.post('http://localhost:4000/graphql', {
+  axios.post('http://localhost:4001/graphql', {
     query: `
       mutation($title: String!, $description: String!) {
         addTodo(title: $title, description: $description) {
@@ -52,7 +54,7 @@ window.addTodo = function () {
 }
 
 window.updateTodo = function (id) {
-  axios.post('http://localhost:4000/graphql', {
+  axios.post('http://localhost:4001/graphql', {
     query: `
       mutation($id: ID!) {
         toggleTodoCompleted(id: $id) {
@@ -82,7 +84,7 @@ window.updateTodo = function (id) {
 }
 
 window.deleteTodo = function (id) {
-  axios.post('http://localhost:4000/graphql', {
+  axios.post('http://localhost:4001/graphql', {
     query: `
       mutation($id: ID!) {
         deleteTodo(id: $id)
@@ -152,7 +154,7 @@ socket.on('todo-deleted', (id) => {
   removeTodoFromList(id);
 });
 
-axios.post('http://localhost:4000/graphql', {
+axios.post('http://localhost:4001/graphql', {
   query: `
     query {
       todos {
@@ -175,3 +177,4 @@ axios.post('http://localhost:4000/graphql', {
   .catch(error => {
     console.error('Error fetching todos:', error);
   });
+ 

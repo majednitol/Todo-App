@@ -1,0 +1,140 @@
+version: '3.8'
+
+services:
+  backend1:
+    build: ./backend
+    depends_on:
+      - redis
+      - postgres
+    environment:
+      - DATABASE_URL="postgresql://user:password@postgres:5432/todoapp?schema=public"
+
+      - INSTANCE_NAME=backend1
+      - APOLLO_PORT=4001
+      - SOCKET_IO_PORT=4004
+    ports:
+      - "4001:4001"
+      - "4004:4004"
+    networks:
+      - app-network
+    develop:
+      watch:
+        - action: sync
+          path: ./backend
+          target: /app
+        - action: rebuild
+          path: ./backend/package.json
+          target: /app
+
+  backend2:
+    build: ./backend
+    depends_on:
+      - redis
+      - postgres
+    environment:
+      - DATABASE_URL="postgresql://user:password@postgres:5432/todoapp?schema=public"
+      - INSTANCE_NAME=backend2
+      - APOLLO_PORT=4002
+      - SOCKET_IO_PORT=4005
+    ports:
+      - "4002:4002"
+      - "4005:4005"
+    networks:
+      - app-network
+    develop:
+      watch:
+        - action: sync
+          path: ./backend
+          target: /app
+        - action: rebuild
+          path: ./backend/package.json
+          target: /app
+
+  backend3:
+    build: ./backend
+    depends_on:
+      - redis
+      - postgres
+    environment:
+      - DATABASE_URL="postgresql://user:password@postgres:5432/todoapp?schema=public"
+
+      - INSTANCE_NAME=backend3
+      - APOLLO_PORT=4003
+      - SOCKET_IO_PORT=4006
+      # - DB_HOST=postgres-service
+    ports:
+      - "4003:4003"
+      - "4006:4006"
+    networks:
+      - app-network
+    develop:
+      watch:
+        - action: sync
+          path: ./backend
+          target: /app
+        - action: rebuild
+          path: ./backend/package.json
+          target: /app
+
+  frontend:
+    build: 
+      context: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend1
+      - backend2
+      - backend3
+    networks:
+      - app-network
+    develop:
+      watch:
+        - action: sync
+          path: ./frontend/src
+          target: /usr/src/app/src
+        - action: rebuild
+          path: ./frontend/package.json
+          target: /usr/src/app
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: todoapp
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  nginx:
+    build: ./nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - frontend
+      - backend1
+      - backend2
+      - backend3
+    networks:
+      - app-network
+
+volumes:
+  backend-src:
+    driver: local
+
+  postgres-data:
+    driver: local
+
+networks:
+  app-network:
+    driver: bridge

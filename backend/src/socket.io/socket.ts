@@ -68,8 +68,8 @@ export const setupSocketServer = () => {
     });
   });
 
-  const SOCKET_PORT = process.env.SOCKET_PORT || 4001;
-  socketIoHttpServer.listen(SOCKET_PORT, () => {
-    console.log(`Socket.IO server running on port ${SOCKET_PORT}`);
+  const SOCKET_IO_PORT = process.env.SOCKET_IO_PORT || 4001;
+  socketIoHttpServer.listen(SOCKET_IO_PORT, () => {
+    console.log(`Socket.IO server running on port ${SOCKET_IO_PORT}`);
   });
 };

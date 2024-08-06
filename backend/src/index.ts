@@ -11,7 +11,6 @@ import { makeExecutableSchema } from '@graphql-tools/schema';
 import { setupSocketServer } from './socket.io/socket';
 import redisClient from './redis/redisClient';
 
-
 const app: Express = express(); 
 
 const apolloHttpServer = http.createServer(app);
@@ -43,10 +42,12 @@ apolloServer.start().then(() => {
 
   useServer({ schema }, wsServer);
 
-  const PORT = process.env.PORT || 4000;
-  apolloHttpServer.listen(PORT, () => {
-    console.log(`Apollo Server is running on http://localhost:${PORT}${apolloServer.graphqlPath}`);
-    console.log(`GraphQL subscriptions ready at ws://localhost:${PORT}/graphql`);
+  const APOLLO_PORT = process.env.APOLLO_PORT || 4000;
+  const INSTANCE_NAME = process.env.INSTANCE_NAME || 'unknown instance';
+  const HOST = process.env.HOST || 'unknown instance';
+  apolloHttpServer.listen(APOLLO_PORT, () => {
+    console.log(`Apollo Server (${INSTANCE_NAME}) is running on http://localhost:${APOLLO_PORT}${apolloServer.graphqlPath}`);
+    console.log(`GraphQL subscriptions ready at ws://localhost:${APOLLO_PORT}/graphql`);
   });
 });
 
