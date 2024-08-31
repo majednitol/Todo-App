@@ -7,7 +7,7 @@ services:
       - redis
       - postgres
     environment:
-      - DATABASE_URL="postgresql://user:password@postgres:5432/todoapp?schema=public"
+      - DATABASE_URL=postgresql://user:password@postgres:5432/todoapp?schema=public
 
       - INSTANCE_NAME=backend1
       - APOLLO_PORT=4001
@@ -32,7 +32,7 @@ services:
       - redis
       - postgres
     environment:
-      - DATABASE_URL="postgresql://user:password@postgres:5432/todoapp?schema=public"
+      - DATABASE_URL=postgresql://user:password@postgres:5432/todoapp?schema=public
       - INSTANCE_NAME=backend2
       - APOLLO_PORT=4002
       - SOCKET_IO_PORT=4005
@@ -56,7 +56,7 @@ services:
       - redis
       - postgres
     environment:
-      - DATABASE_URL="postgresql://user:password@postgres:5432/todoapp?schema=public"
+      - DATABASE_URL=postgresql://user:password@postgres:5432/todoapp?schema=public
 
       - INSTANCE_NAME=backend3
       - APOLLO_PORT=4003

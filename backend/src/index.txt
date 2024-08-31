@@ -1,0 +1,90 @@
+In the setup you've described, the different servers play specific roles to ensure that the application runs efficiently, scales well, and can handle various types of client interactions. Here's an overview of the roles of the different servers:
+
+### 1. **Express Server**
+- **Role**: Main application server.
+- **Responsibilities**:
+  - Serves HTTP requests.
+  - Hosts the Apollo Server for GraphQL API.
+  - Manages incoming GraphQL queries and mutations.
+  - Interfaces with the database for data retrieval and manipulation.
+
+### 2. **Apollo Server**
+- **Role**: GraphQL API server.
+- **Responsibilities**:
+  - Exposes the GraphQL endpoint.
+  - Processes GraphQL queries and mutations.
+  - Utilizes resolvers to fetch or update data.
+  - Handles context setup, including Redis PubSub for subscriptions.
+
+### 3. **WebSocket Server**
+- **Role**: Handle GraphQL subscriptions over WebSocket.
+- **Responsibilities**:
+  - Enables real-time updates for GraphQL subscriptions.
+  - Listens for subscription requests from clients.
+  - Uses Redis PubSub to manage and distribute subscription events.
+
+### 4. **Socket.IO Server**
+- **Role**: Real-time communication server using Socket.IO.
+- **Responsibilities**:
+  - Handles WebSocket connections for real-time communication.
+  - Listens for and broadcasts custom events (e.g., `todo-added`, `todo-updated`, `todo-deleted`).
+  - Publishes events to Redis for distributed messaging.
+  - Manages client connections and disconnections.
+
+### 5. **Redis Server**
+- **Role**: In-memory data store and message broker.
+- **Responsibilities**:
+  - Acts as a Pub/Sub mechanism for real-time events.
+  - Stores and distributes messages/events across different servers.
+  - Ensures that events are propagated to all instances of the application in a distributed environment.
+
+### 6. **Database Server (PostgreSQL)**
+- **Role**: Persistent data storage.
+- **Responsibilities**:
+  - Stores the application's data in a structured format.
+  - Handles data persistence, retrieval, and updates.
+  - Interfaces with the application server (Express) to perform database operations.
+
+### 7. **Nginx Server**
+- **Role**: Load balancer and reverse proxy.
+- **Responsibilities**:
+  - Distributes incoming requests across multiple backend servers to ensure load balancing.
+  - Proxies requests to the appropriate backend servers based on the URL path (e.g., `/graphql` for GraphQL API, `/socket.io/` for Socket.IO).
+  - Manages SSL termination (if configured).
+  - Provides high availability and reliability by distributing traffic.
+
+### 8. **Kubernetes Cluster**
+- **Role**: Orchestration platform.
+- **Responsibilities**:
+  - Manages deployment, scaling, and operation of containerized applications.
+  - Ensures high availability and fault tolerance.
+  - Handles load balancing and service discovery within the cluster.
+  - Automates the deployment of application updates.
+
+### How They Work Together
+
+1. **Client Interaction**:
+   - Clients send HTTP requests to Nginx.
+   - Nginx forwards requests to the appropriate backend servers (Express, Apollo, Socket.IO).
+
+2. **GraphQL Queries and Mutations**:
+   - Handled by the Apollo Server running on the Express server.
+   - Apollo Server processes the request, interacts with the database, and returns the response.
+
+3. **GraphQL Subscriptions**:
+   - Clients connect to the WebSocket server for real-time updates.
+   - The WebSocket server uses Redis PubSub to manage and broadcast subscription events.
+
+4. **Real-Time Communication**:
+   - Socket.IO handles WebSocket connections for real-time communication.
+   - Socket.IO server publishes events to Redis, which are then distributed to all instances of the application.
+
+5. **Redis PubSub**:
+   - Redis acts as a central message broker.
+   - Ensures that events (e.g., todos added/updated/deleted) are distributed across all application instances.
+
+6. **Scaling and Load Balancing**:
+   - Kubernetes ensures that multiple instances of the application are running.
+   - Nginx load balances requests across these instances to handle traffic efficiently.
+
+This setup provides a robust, scalable, and highly available architecture for handling GraphQL queries, mutations, subscriptions, and real-time events. Each server has a specific role that contributes to the overall functionality and performance of the application.

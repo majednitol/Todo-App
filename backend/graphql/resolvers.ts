@@ -1,11 +1,12 @@
 import { PrismaClient } from '@prisma/client';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
-import redisClient from './../src/redis/redisClient';
+import { redisClient, subscriberRedisClient } from '../src/redis/redisClient';
+
 
 const prisma = new PrismaClient();
 const pubsub = new RedisPubSub({
   publisher: redisClient,
-  subscriber: redisClient,
+  subscriber: subscriberRedisClient,
 });
 
 const TODO_ADDED = 'TODO_ADDED';
@@ -17,14 +18,19 @@ export const resolvers = {
     todos: async () => {
       try {
         const cachedTodos = await redisClient.get('todos');
+        console.log("cachedTodos",cachedTodos)
         if (cachedTodos) {
           return JSON.parse(cachedTodos);
         }
 
         const todos = await prisma.todo.findMany();
-        await redisClient.set('todos', JSON.stringify(todos), 'EX', 10);
+        if (!todos || todos.length === 0) {
+          console.log("Todos not exist in the database");
+          throw new Error("No todos found in the database. Please check if the 'Todo' table exists.");
+        }
+        await redisClient.set('todos', JSON.stringify(todos), 'EX', 100000);
 
-        return todos.map(todo => ({
+        return todos.map((todo: { createdAt: { toISOString: () => any; }; updatedAt: { toISOString: () => any; }; }) => ({
           ...todo,
           createdAt: todo.createdAt.toISOString(),
           updatedAt: todo.updatedAt.toISOString(),
@@ -38,7 +44,7 @@ export const resolvers = {
         }
       }
     },
-    todo: async (_: any, { id }: { id: number }) => {  // Changed to number
+    todo: async (_: any, { id }: { id: number }) => {
       try {
         const todo = await prisma.todo.findUnique({ where: { id } });
         if (!todo) {
@@ -145,17 +151,14 @@ export const resolvers = {
   },
   Subscription: {
     todoAdded: {
-      subscribe: () => {
-        pubsub.asyncIterator([TODO_ADDED])
-        
-        console.log("added subscription occurs successfully")
-      },
+      subscribe: () => pubsub.asyncIterator(TODO_ADDED),
     },
     todoUpdated: {
-      // subscribe: () => pubsub.asyncIterator([TODO_UPDATED]),
+      subscribe: () => pubsub.asyncIterator(TODO_UPDATED),
     },
     todoDeleted: {
-      subscribe: () => pubsub.asyncIterator([TODO_DELETED]),
+      subscribe: () => pubsub.asyncIterator(TODO_DELETED),
     },
   },
 };
+
